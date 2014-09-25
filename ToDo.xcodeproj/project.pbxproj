@@ -14,6 +14,13 @@
 		1A111B7419D4B40500CF588F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A111B7319D4B40500CF588F /* Images.xcassets */; };
 		1A111B7719D4B40500CF588F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A111B7519D4B40500CF588F /* LaunchScreen.xib */; };
 		1A111B8319D4B40500CF588F /* ToDoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A111B8219D4B40500CF588F /* ToDoTests.m */; };
+		1A111B8E19D4B44E00CF588F /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B8D19D4B44E00CF588F /* Dropbox.framework */; };
+		1A111B9019D4B46600CF588F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B8F19D4B46600CF588F /* SystemConfiguration.framework */; };
+		1A111B9219D4B47000CF588F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B9119D4B47000CF588F /* libz.dylib */; };
+		1A111B9419D4B47B00CF588F /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B9319D4B47B00CF588F /* libc++.dylib */; };
+		1A111B9619D4B48400CF588F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B9519D4B48400CF588F /* QuartzCore.framework */; };
+		1A111B9819D4B49300CF588F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B9719D4B49300CF588F /* Security.framework */; };
+		1A111B9A19D4B49B00CF588F /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B9919D4B49B00CF588F /* CFNetwork.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +47,13 @@
 		1A111B7C19D4B40500CF588F /* ToDoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A111B8119D4B40500CF588F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A111B8219D4B40500CF588F /* ToDoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ToDoTests.m; sourceTree = "<group>"; };
+		1A111B8D19D4B44E00CF588F /* Dropbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Dropbox.framework; sourceTree = "<group>"; };
+		1A111B8F19D4B46600CF588F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1A111B9119D4B47000CF588F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1A111B9319D4B47B00CF588F /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		1A111B9519D4B48400CF588F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1A111B9719D4B49300CF588F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		1A111B9919D4B49B00CF588F /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +61,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A111B9A19D4B49B00CF588F /* CFNetwork.framework in Frameworks */,
+				1A111B9819D4B49300CF588F /* Security.framework in Frameworks */,
+				1A111B9619D4B48400CF588F /* QuartzCore.framework in Frameworks */,
+				1A111B9419D4B47B00CF588F /* libc++.dylib in Frameworks */,
+				1A111B9219D4B47000CF588F /* libz.dylib in Frameworks */,
+				1A111B9019D4B46600CF588F /* SystemConfiguration.framework in Frameworks */,
+				1A111B8E19D4B44E00CF588F /* Dropbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +84,7 @@
 		1A111B5A19D4B40500CF588F = {
 			isa = PBXGroup;
 			children = (
+				1A111B8C19D4B41B00CF588F /* Frameworks */,
 				1A111B6519D4B40500CF588F /* ToDo */,
 				1A111B7F19D4B40500CF588F /* ToDoTests */,
 				1A111B6419D4B40500CF588F /* Products */,
@@ -117,6 +139,20 @@
 				1A111B8119D4B40500CF588F /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1A111B8C19D4B41B00CF588F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A111B9919D4B49B00CF588F /* CFNetwork.framework */,
+				1A111B9719D4B49300CF588F /* Security.framework */,
+				1A111B9519D4B48400CF588F /* QuartzCore.framework */,
+				1A111B9319D4B47B00CF588F /* libc++.dylib */,
+				1A111B9119D4B47000CF588F /* libz.dylib */,
+				1A111B8F19D4B46600CF588F /* SystemConfiguration.framework */,
+				1A111B8D19D4B44E00CF588F /* Dropbox.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,7 +379,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = ToDo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -353,7 +394,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = ToDo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
