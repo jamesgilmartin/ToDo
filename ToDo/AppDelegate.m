@@ -8,6 +8,10 @@
 
 #import "AppDelegate.h"
 
+// App Key & Secret for the remote persistence via DropBox Datastore
+#define DBAppKey @"6d7zhmf8ihqvhth"
+#define DBAppSecret @"ymuv4vkkcazqfwb"
+
 @interface AppDelegate ()
 
 @end
@@ -17,6 +21,22 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    // Set up Dropbox Account Manager
+    DBAccountManager *accountManager = [[DBAccountManager alloc] initWithAppKey:DBAppKey secret:DBAppSecret];
+    [DBAccountManager setSharedManager:accountManager];
+    
+    // Set up the datastore manager
+    DBAccount *account = [[DBAccountManager sharedManager] linkedAccount];
+    if (account) {
+        // Use Dropbox datastores
+        [DBDatastoreManager setSharedManager:[DBDatastoreManager managerForAccount:account]];
+    } else {
+        // Use local datastores
+        [DBDatastoreManager setSharedManager:[DBDatastoreManager localManagerForAccountManager:
+                                              [DBAccountManager sharedManager]]];
+    }
+    
     return YES;
 }
 
@@ -40,6 +60,34 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+#pragma - Dropbox Login Handler
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url sourceApplication:(NSString *)source annotation:(id)annotation
+{
+    DBAccount *account = [[DBAccountManager sharedManager] handleOpenURL:url];
+    if (account)
+    {
+        // Login was successful
+        
+        // Migrate any local datastores to the linked account
+        DBDatastoreManager *localManager = [DBDatastoreManager localManagerForAccountManager:
+                                            [DBAccountManager sharedManager]];
+        [localManager migrateToAccount:account error:nil];
+        // Now use Dropbox datastores
+        [DBDatastoreManager setSharedManager:[DBDatastoreManager managerForAccount:account]];
+        
+        return YES;
+    }
+    else
+    {
+        // Login failed or was cancelled
+        
+        // Dispatch notification in order to inform of cancel or error
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"DBLoginFailed" object:nil];
+    }
+    return NO;
 }
 
 @end
