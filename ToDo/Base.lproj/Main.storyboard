@@ -64,10 +64,10 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
-        <!--View Controller-->
+        <!--Item List View Controller Scene-->
         <scene sceneID="Rdc-om-oiH">
             <objects>
-                <viewController id="4sd-uy-9gZ" sceneMemberID="viewController">
+                <viewController id="4sd-uy-9gZ" userLabel="Item List View Controller Scene" customClass="ItemListViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="7lq-NI-aJN"/>
                         <viewControllerLayoutGuide type="bottom" id="GG3-n0-ih2"/>
@@ -75,13 +75,79 @@
                     <view key="view" contentMode="scaleToFill" id="6e2-x6-ZYz">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="80" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="3aI-Hg-aPf">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="itemListCell" id="Fkh-Kt-uxu" customClass="ItemListTableViewCell">
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fkh-Kt-uxu" id="fjK-3N-sR9">
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q9a-YW-wid">
+                                                    <rect key="frame" x="8" y="29" width="42" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="caY-FU-vNF">
+                                                    <rect key="frame" x="81" y="9" width="400" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ADm-CR-DhK">
+                                                    <rect key="frame" x="111" y="30" width="370" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Xx-EG-Pjn">
+                                                    <rect key="frame" x="111" y="51" width="370" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="completionLabel" destination="q9a-YW-wid" id="aIv-AT-qY3"/>
+                                            <outlet property="deadlineLabel" destination="ADm-CR-DhK" id="UCg-69-4sq"/>
+                                            <outlet property="modifiedLabel" destination="8Xx-EG-Pjn" id="T8C-OD-qip"/>
+                                            <outlet property="titleLabel" destination="caY-FU-vNF" id="MgI-lE-vIU"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="4sd-uy-9gZ" id="wE5-cB-uci"/>
+                                    <outlet property="delegate" destination="4sd-uy-9gZ" id="wGY-pR-1fj"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Zdh-Tl-YMP"/>
+                    <navigationItem key="navigationItem" title="To Do Items" id="2ww-yA-NNX">
+                        <barButtonItem key="leftBarButtonItem" title="Home" id="8TW-9z-JdP">
+                            <connections>
+                                <action selector="returnHome:" destination="4sd-uy-9gZ" id="DFo-aR-DqX"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="3pQ-kx-Ddt">
+                            <connections>
+                                <action selector="addNewTask:" destination="4sd-uy-9gZ" id="Xmo-14-1ZI"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="itemListTable" destination="3aI-Hg-aPf" id="qbh-xv-Fvj"/>
+                        <segue destination="NF9-KE-IsD" kind="unwind" identifier="returnHome" unwindAction="unwindToHome:" id="gVR-jI-K3K"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TtC-DP-byq" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="NF9-KE-IsD" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1612" y="136"/>
+            <point key="canvasLocation" x="1612" y="133"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Wh6-IF-5sL">
