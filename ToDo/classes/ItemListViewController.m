@@ -41,8 +41,8 @@
         [weakSelf.itemListTable reloadData];
     }];
     
-    // Quick way to test on new devices (only use once and comment out) - remove once app structure finished
-    // [self populateDatabaseWithTestData];
+    // Ensures table refreshes when returning from add / edit
+    [self.itemListTable reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -124,7 +124,7 @@
 
 - (IBAction)addNewTask:(id)sender
 {
-    NSLog(@"Add new task function called");
+    [self performSegueWithIdentifier:@"addNewTask" sender:self];
 }
 
 // Allow unwind segues to here
@@ -167,50 +167,6 @@
     }
     
     return colour;
-}
-
-- (void)populateDatabaseWithTestData
-{
-    // Saves test data in order to test table prior to full app functionality
-    DBTable *toDoItems = [self.datastore getTable:@"toDoItems"];
-    
-    NSMutableDictionary *object1 = [[NSMutableDictionary alloc] init];
-    [object1 setObject:@"Task 1" forKey:@"title"];
-    [object1 setObject:@20 forKey:@"completed"];
-    [object1 setObject:@1 forKey:@"priority"];
-    [object1 setObject:[NSDate date] forKey:@"deadline"];
-    [object1 setObject:@"" forKey:@"notes"];
-    [object1 setObject:[NSDate date] forKey:@"modified"];
-    [toDoItems insert:object1];
-    
-    NSMutableDictionary *object2 = [[NSMutableDictionary alloc] init];
-    [object2 setObject:@"Task 2" forKey:@"title"];
-    [object2 setObject:@40 forKey:@"completed"];
-    [object2 setObject:@0 forKey:@"priority"];
-    [object2 setObject:[NSDate date] forKey:@"deadline"];
-    [object2 setObject:@"" forKey:@"notes"];
-    [object2 setObject:[NSDate date] forKey:@"modified"];
-    [toDoItems insert:object2];
-    
-    NSMutableDictionary *object3 = [[NSMutableDictionary alloc] init];
-    [object3 setObject:@"Task 3" forKey:@"title"];
-    [object3 setObject:@60 forKey:@"completed"];
-    [object3 setObject:@2 forKey:@"priority"];
-    [object3 setObject:[NSDate date] forKey:@"deadline"];
-    [object3 setObject:@"" forKey:@"notes"];
-    [object3 setObject:[NSDate date] forKey:@"modified"];
-    [toDoItems insert:object3];
-    
-    NSMutableDictionary *object4 = [[NSMutableDictionary alloc] init];
-    [object4 setObject:@"Task 4" forKey:@"title"];
-    [object4 setObject:@80 forKey:@"completed"];
-    [object4 setObject:@1 forKey:@"priority"];
-    [object4 setObject:[NSDate date] forKey:@"deadline"];
-    [object4 setObject:@"" forKey:@"notes"];
-    [object4 setObject:[NSDate date] forKey:@"modified"];
-    [toDoItems insert:object4];
-    
-    [self.datastore sync:nil];
 }
 
 @end
