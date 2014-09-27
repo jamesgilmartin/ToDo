@@ -45,22 +45,6 @@
     [self.itemListTable reloadData];
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    // Close the current datastore
-    {
-        [self.datastore close];
-    }
-    
-    self.datastore = nil;
-    self.sortDescriptors = nil;
-    
-    // Stop listening for changes
-    [[DBDatastoreManager sharedManager] removeObserver:self];
-}
-
 
 #pragma mark - Table
 
@@ -104,7 +88,13 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Selected row at index: %li", (long)indexPath.row);
+    // Get the record associated with the row
+    DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
+    NSArray *items = [[itemsTable query:nil error:nil] sortedArrayUsingDescriptors:self.sortDescriptors];
+    DBRecord *item = [items objectAtIndex:indexPath.row];
+    
+    // Go to EditTaskViewController
+    [self performSegueWithIdentifier:@"editTask" sender:item];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -129,6 +119,29 @@
 
 // Allow unwind segues to here
 - (IBAction)unwindToListView: (UIStoryboardSegue *)segue{}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Close the current datastore
+    if (self.datastore)
+    {
+        [self.datastore close];
+    }
+    
+    self.datastore = nil;
+    self.sortDescriptors = nil;
+    
+    // Stop listening for changes
+    [[DBDatastoreManager sharedManager] removeObserver:self];
+    
+    // Check destination of Segue
+    if ([segue.identifier isEqualToString:@"editTask"])
+    {
+        // If we are going to edit pass the relevent record to the View Controller
+        EditTaskViewController *destination = [segue destinationViewController];
+        destination.recordToEdit = sender;
+    }
+}
 
 
 #pragma mark - Utility Functions

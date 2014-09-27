@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
@@ -62,6 +63,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="111" y="136"/>
         </scene>
         <!--Item List View Controller Scene-->
         <scene sceneID="Rdc-om-oiH">
@@ -142,6 +144,7 @@
                         <outlet property="itemListTable" destination="3aI-Hg-aPf" id="qbh-xv-Fvj"/>
                         <segue destination="NF9-KE-IsD" kind="unwind" identifier="returnHome" unwindAction="unwindToHome:" id="gVR-jI-K3K"/>
                         <segue destination="F1a-ow-JuQ" kind="show" identifier="addNewTask" id="OU2-ud-8Y0"/>
+                        <segue destination="u6D-bo-ecR" kind="show" identifier="editTask" id="tGI-bY-zjF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TtC-DP-byq" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -170,7 +173,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Task Title" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mNK-tA-Hff">
                                 <rect key="frame" x="15" y="89" width="570" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" enablesReturnKeyAutomatically="YES"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
                                     <action selector="textFieldDidChange:" destination="F1a-ow-JuQ" eventType="editingChanged" id="rYq-rv-5iD"/>
                                 </connections>
@@ -234,7 +237,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Notes here..." translatesAutoresizingMaskIntoConstraints="NO" id="qJV-eB-ikm">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qJV-eB-ikm">
                                 <rect key="frame" x="15" y="307" width="570" height="100"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -299,13 +302,187 @@
                         <outlet property="prioritySegmentedControl" destination="HfG-Pu-A5a" id="cMD-Xa-Xnl"/>
                         <outlet property="saveBarButton" destination="PAu-U0-TGn" id="F5y-NO-h6x"/>
                         <outlet property="titleTextField" destination="mNK-tA-Hff" id="M8P-C6-mNg"/>
-                        <segue destination="87A-Gl-HEG" kind="unwind" identifier="rewindToList" unwindAction="unwindToListView:" id="qAz-Qu-s1b"/>
+                        <segue destination="87A-Gl-HEG" kind="unwind" identifier="unwindToList" unwindAction="unwindToListView:" id="qAz-Qu-s1b"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K4J-r9-fr7" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="87A-Gl-HEG" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="2556" y="-143"/>
+            <point key="canvasLocation" x="2534" y="-255"/>
+        </scene>
+        <!--Edit Task-->
+        <scene sceneID="osW-qH-SIe">
+            <objects>
+                <viewController title="Edit Task" id="u6D-bo-ecR" userLabel="Edit Task" customClass="EditTaskViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ntW-IS-VFu"/>
+                        <viewControllerLayoutGuide type="bottom" id="g5B-8p-OzT"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="g7u-De-UuK">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Task Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ew-kf-8Pg">
+                                <rect key="frame" x="15" y="74" width="62" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Task Title" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Vzq-ng-SDX">
+                                <rect key="frame" x="15" y="89" width="570" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <action selector="textFieldDidChange:" destination="u6D-bo-ecR" eventType="editingChanged" id="HHx-nC-kTK"/>
+                                </connections>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Completion" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="faj-xP-AbR">
+                                <rect key="frame" x="15" y="129" width="65" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100%" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wgt-bf-A1n">
+                                <rect key="frame" x="552" y="129" width="33" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="lms-lN-FHj">
+                                <rect key="frame" x="13" y="144" width="574" height="31"/>
+                                <connections>
+                                    <action selector="completionSliderChanged:" destination="u6D-bo-ecR" eventType="valueChanged" id="3iI-zu-H4y"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Priority" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SJl-2c-r0X">
+                                <rect key="frame" x="15" y="184" width="40" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="hke-UX-Ew0">
+                                <rect key="frame" x="15" y="199" width="570" height="29"/>
+                                <segments>
+                                    <segment title="Low"/>
+                                    <segment title="Medium"/>
+                                    <segment title="High"/>
+                                </segments>
+                                <connections>
+                                    <action selector="prioritySegmentedControllerChanged:" destination="u6D-bo-ecR" eventType="valueChanged" id="0ay-OM-p2G"/>
+                                </connections>
+                            </segmentedControl>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deadline" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KeB-FE-7sb">
+                                <rect key="frame" x="15" y="237" width="49" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tYy-4P-wox">
+                                <rect key="frame" x="555" y="231" width="30" height="27"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <state key="normal" title="Clear">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="clearDeadline:" destination="u6D-bo-ecR" eventType="touchUpInside" id="sW3-jc-H82"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1Ab-y9-Mx3">
+                                <rect key="frame" x="15" y="252" width="570" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZY9-Zl-rms">
+                                <rect key="frame" x="15" y="292" width="33" height="15"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="V8c-pI-64p">
+                                <rect key="frame" x="15" y="307" width="570" height="100"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="ggY-UK-7p5"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KAX-tY-EWR">
+                                <rect key="frame" x="15" y="550" width="570" height="30"/>
+                                <state key="normal" title="Delete Record">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteTask:" destination="u6D-bo-ecR" eventType="touchUpInside" id="unX-AQ-2gg"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="ZY9-Zl-rms" firstAttribute="top" secondItem="1Ab-y9-Mx3" secondAttribute="bottom" constant="10" id="1Va-oV-p36"/>
+                            <constraint firstItem="lms-lN-FHj" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="25r-27-xPP"/>
+                            <constraint firstItem="SJl-2c-r0X" firstAttribute="top" secondItem="lms-lN-FHj" secondAttribute="bottom" constant="10" id="6rx-47-oS0"/>
+                            <constraint firstItem="3ew-kf-8Pg" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="8rR-pL-myn"/>
+                            <constraint firstItem="1Ab-y9-Mx3" firstAttribute="top" secondItem="KeB-FE-7sb" secondAttribute="bottom" id="9pW-cV-BcK"/>
+                            <constraint firstAttribute="trailing" secondItem="KAX-tY-EWR" secondAttribute="trailing" constant="15" id="Aro-NR-MDF"/>
+                            <constraint firstItem="hke-UX-Ew0" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="FKf-r7-2Rh"/>
+                            <constraint firstItem="V8c-pI-64p" firstAttribute="top" secondItem="ZY9-Zl-rms" secondAttribute="bottom" id="Fwv-PN-8JY"/>
+                            <constraint firstItem="KAX-tY-EWR" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="H32-TK-Gte"/>
+                            <constraint firstItem="faj-xP-AbR" firstAttribute="centerY" secondItem="Wgt-bf-A1n" secondAttribute="centerY" id="Jpc-kH-MBp"/>
+                            <constraint firstItem="tYy-4P-wox" firstAttribute="trailing" secondItem="g7u-De-UuK" secondAttribute="trailing" constant="-15" id="MMO-Gn-n3d"/>
+                            <constraint firstItem="Vzq-ng-SDX" firstAttribute="top" secondItem="3ew-kf-8Pg" secondAttribute="bottom" id="Mfp-vs-Mxe"/>
+                            <constraint firstItem="ZY9-Zl-rms" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="Phk-iO-g3y"/>
+                            <constraint firstItem="KeB-FE-7sb" firstAttribute="centerY" secondItem="tYy-4P-wox" secondAttribute="centerY" id="SO6-8J-BW3"/>
+                            <constraint firstItem="lms-lN-FHj" firstAttribute="top" secondItem="faj-xP-AbR" secondAttribute="bottom" id="U63-6u-1IH"/>
+                            <constraint firstItem="Wgt-bf-A1n" firstAttribute="trailing" secondItem="g7u-De-UuK" secondAttribute="trailing" constant="-15" id="Wps-h5-b8y"/>
+                            <constraint firstAttribute="trailing" secondItem="1Ab-y9-Mx3" secondAttribute="trailing" constant="15" id="XzM-xj-PQW"/>
+                            <constraint firstItem="1Ab-y9-Mx3" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="d3Q-su-UwH"/>
+                            <constraint firstAttribute="trailing" secondItem="V8c-pI-64p" secondAttribute="trailing" constant="15" id="fbj-1s-Fq5"/>
+                            <constraint firstItem="faj-xP-AbR" firstAttribute="top" secondItem="Vzq-ng-SDX" secondAttribute="bottom" constant="10" id="fuc-jC-zve"/>
+                            <constraint firstItem="Vzq-ng-SDX" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="g7o-Ur-R7A"/>
+                            <constraint firstAttribute="trailing" secondItem="Vzq-ng-SDX" secondAttribute="trailing" constant="15" id="hfU-az-wv7"/>
+                            <constraint firstItem="hke-UX-Ew0" firstAttribute="top" secondItem="SJl-2c-r0X" secondAttribute="bottom" id="i4W-Nj-gmD"/>
+                            <constraint firstItem="3ew-kf-8Pg" firstAttribute="top" secondItem="ntW-IS-VFu" secondAttribute="bottom" constant="10" id="jEy-Te-SzR"/>
+                            <constraint firstItem="faj-xP-AbR" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="pNo-WF-dd0"/>
+                            <constraint firstItem="KeB-FE-7sb" firstAttribute="top" secondItem="hke-UX-Ew0" secondAttribute="bottom" constant="10" id="pUL-tf-2B4"/>
+                            <constraint firstItem="KeB-FE-7sb" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="qoa-SX-l4p"/>
+                            <constraint firstItem="V8c-pI-64p" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="t29-CW-r8e"/>
+                            <constraint firstItem="g5B-8p-OzT" firstAttribute="top" secondItem="KAX-tY-EWR" secondAttribute="bottom" constant="20" id="uY9-v3-Pbc"/>
+                            <constraint firstAttribute="trailing" secondItem="lms-lN-FHj" secondAttribute="trailing" constant="15" id="x8M-bv-NvI"/>
+                            <constraint firstItem="SJl-2c-r0X" firstAttribute="leading" secondItem="g7u-De-UuK" secondAttribute="leading" constant="15" id="zah-bV-M9c"/>
+                            <constraint firstAttribute="trailing" secondItem="hke-UX-Ew0" secondAttribute="trailing" constant="15" id="zdW-rM-Ifj"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Edit Task" id="tM0-Fz-ely">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Pa7-Bd-aGn">
+                            <connections>
+                                <action selector="cancelEdit:" destination="u6D-bo-ecR" id="e4p-F7-pKj"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="ByD-Vw-TKy">
+                            <connections>
+                                <action selector="saveChanges:" destination="u6D-bo-ecR" id="axr-hT-01z"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="cancelEditButton" destination="Pa7-Bd-aGn" id="DeS-NJ-dWG"/>
+                        <outlet property="clearDeadlineButton" destination="tYy-4P-wox" id="VzT-b2-W8p"/>
+                        <outlet property="completionLabel" destination="Wgt-bf-A1n" id="aFv-kX-fTU"/>
+                        <outlet property="completionSlider" destination="lms-lN-FHj" id="8O2-Yr-j7O"/>
+                        <outlet property="deadlineTextField" destination="1Ab-y9-Mx3" id="F3g-y7-B44"/>
+                        <outlet property="deleteRecordButton" destination="KAX-tY-EWR" id="UAB-rq-XVW"/>
+                        <outlet property="notesTextView" destination="V8c-pI-64p" id="yqM-aC-OcH"/>
+                        <outlet property="prioritySegmentedControl" destination="hke-UX-Ew0" id="mVc-D4-lTg"/>
+                        <outlet property="saveChangesButton" destination="ByD-Vw-TKy" id="hAm-KH-wGO"/>
+                        <outlet property="titleTextField" destination="Vzq-ng-SDX" id="nRH-3n-rxB"/>
+                        <segue destination="aAt-fH-59i" kind="unwind" identifier="unwindToList" unwindAction="unwindToListView:" id="krm-7W-je5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fzu-4l-kiK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="aAt-fH-59i" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="2534" y="512"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Wh6-IF-5sL">
@@ -323,7 +500,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zSL-UJ-FF8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="800" y="136"/>
+            <point key="canvasLocation" x="872" y="136"/>
         </scene>
     </scenes>
 </document>

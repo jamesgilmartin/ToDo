@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Dropbox/Dropbox.h>
 #import "ItemListTableViewCell.h"
+#import "EditTaskViewController.h"
 
 @interface ItemListViewController : UIViewController <UITableViewDataSource, UITableViewDataSource>
 

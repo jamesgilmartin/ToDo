@@ -39,9 +39,117 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Saving Record
+
+#pragma mark - Setup
+
+- (void)setUpModifiedKeyboards
+{
+    // Set up datepicker as input for deadline text field
+    UIDatePicker *datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 0)];
+    [datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
+    
+    // Add a toolbar with a done button
+    UIToolbar *datePickerToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, self.view.bounds.size.width, 44)];
+    datePickerToolbar.barStyle = UIBarStyleDefault;
+    datePickerToolbar.items = [NSArray arrayWithObjects:
+                               [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                               [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(datePickerDone)],
+                               nil];
+    [datePickerToolbar sizeToFit];
+    
+    // Set picker and toolbar as input for deadline text field
+    [self.deadlineTextField setInputView:datePicker];
+    [self.deadlineTextField setInputAccessoryView:datePickerToolbar];
+    
+    // Create toolbar with done button for text view
+    UIToolbar *textViewToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, self.view.bounds.size.width, 44)];
+    textViewToolbar.barStyle = UIBarStyleDefault;
+    textViewToolbar.items = [NSArray arrayWithObjects:
+                             [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
+                             [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(textViewDone)],
+                             nil];
+    [textViewToolbar sizeToFit];
+    
+    // Set toolbar as accessory for notes text view
+    [self.notesTextView setInputAccessoryView:textViewToolbar];
+}
+
+
+#pragma mark - Navigation
+
+- (IBAction)cancelNewTask:(id)sender
+{
+    // Return to the table view controller
+    [self performSegueWithIdentifier:@"unwindToList" sender:self];
+}
 
 - (IBAction)saveNewTask:(id)sender
+{
+    [self saveRecord];
+}
+
+
+#pragma mark - Keyboard Control
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    // Close keyboard when return key pressed
+    [textField resignFirstResponder];
+    return NO;
+}
+
+- (void)datePickerDone
+{
+    // Close the datepicker using done button on InputAccessory
+    [self.deadlineTextField resignFirstResponder];
+}
+
+- (void)textViewDone
+{
+    // Close keyboard using done button on InputAccessory
+    [self.notesTextView resignFirstResponder];
+}
+
+
+#pragma mark - Record Modification
+
+- (IBAction)textFieldDidChange:(id)sender
+{
+    // Save button enabled only if the new element has a title
+    if (self.titleTextField.text.length > 0)
+    {
+        self.saveBarButton.enabled = YES;
+    }
+    else
+    {
+        self.saveBarButton.enabled = NO;
+    }
+}
+
+- (IBAction)sliderValueChanged:(id)sender
+{
+    // Update completion label
+    self.completionLabel.text = [NSString stringWithFormat:@"%@%%", [NSNumber numberWithInteger:self.completionSlider.value]];
+}
+
+- (void)datePickerValueChanged: (UIDatePicker *)sender
+{
+    // Update deadline field and store the date
+    self.deadlineTextField.text = [self formattedStringFromDate:sender.date];
+    self.deadline = sender.date;
+}
+
+- (IBAction)clearDeadline:(id)sender
+{
+    // Clear deadline field and nullify the stored date
+    self.deadlineTextField.text = @"";
+    self.deadline = nil;
+}
+
+
+#pragma mark - Saving Record
+
+- (void)saveRecord
 {
     // Disable user interaction until save completes
     self.view.userInteractionEnabled = NO;
@@ -89,109 +197,14 @@
     }
     
     self.datastore = nil;
+    self.deadline = nil;
     
     // Return to the table view controller
-    [self performSegueWithIdentifier:@"rewindToList" sender:self];
-}
-
-
-#pragma mark - Navigation
-
-- (IBAction)cancelNewTask:(id)sender
-{
-    // Return to the table view controller
-    [self performSegueWithIdentifier:@"rewindToList" sender:self];
-}
-
-
-#pragma mark - User Input
-
-- (IBAction)textFieldDidChange:(id)sender
-{
-    // Save button enabled only if the new element has a title
-    if (self.titleTextField.text.length > 0)
-    {
-        self.saveBarButton.enabled = YES;
-    }
-    else
-    {
-        self.saveBarButton.enabled = NO;
-    }
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    // Close keyboard when return key pressed
-    [textField resignFirstResponder];
-    return NO;
-}
-
-- (IBAction)sliderValueChanged:(id)sender
-{
-    // Update completion label
-    self.completionLabel.text = [NSString stringWithFormat:@"%@%%", [NSNumber numberWithInteger:self.completionSlider.value]];
-}
-
-- (void)datePickerValueChanged: (UIDatePicker *)sender
-{
-    // Update deadline field and store the date
-    self.deadlineTextField.text = [self formattedStringFromDate:sender.date];
-    self.deadline = sender.date;
-}
-
-- (void)datePickerDone
-{
-    // Close the datepicker using done button on InputAccessory
-    [self.deadlineTextField resignFirstResponder];
-}
-
-- (IBAction)clearDeadline:(id)sender
-{
-    // Clear deadline field and nullify the stored date
-    self.deadlineTextField.text = @"";
-    self.deadline = nil;
-}
-
-- (void)textViewDone
-{
-    // Close keyboard using done button on InputAccessory
-    [self.notesTextView resignFirstResponder];
+    [self performSegueWithIdentifier:@"unwindToList" sender:self];
 }
 
 
 #pragma mark - Utilities
-
-- (void)setUpModifiedKeyboards
-{
-    // Set up datepicker as input for deadline text field
-    UIDatePicker *datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 0)];
-    [datePicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
-    
-    // Add a toolbar with a done button
-    UIToolbar *datePickerToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, self.view.bounds.size.width, 44)];
-    datePickerToolbar.barStyle = UIBarStyleDefault;
-    datePickerToolbar.items = [NSArray arrayWithObjects:
-                               [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-                               [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(datePickerDone)],
-                               nil];
-    [datePickerToolbar sizeToFit];
-    
-    // Set picker and toolbar as input for deadline text field
-    [self.deadlineTextField setInputView:datePicker];
-    [self.deadlineTextField setInputAccessoryView:datePickerToolbar];
-    
-    // Create toolbar with done button for text view
-    UIToolbar *textViewToolbar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, self.view.bounds.size.height, self.view.bounds.size.width, 44)];
-    textViewToolbar.barStyle = UIBarStyleDefault;
-    textViewToolbar.items = [NSArray arrayWithObjects:
-                             [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-                             [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(textViewDone)],
-                             nil];
-    [textViewToolbar sizeToFit];
-    
-    // Set toolbar as accessory for notes text view
-    [self.notesTextView setInputAccessoryView:textViewToolbar];
-}
 
 - (NSString *)formattedStringFromDate: (NSDate *)date
 {
