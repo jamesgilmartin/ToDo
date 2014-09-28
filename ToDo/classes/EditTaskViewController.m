@@ -21,9 +21,6 @@
     // Store the original center in order to reset view when keyboard closes.
     self.originalCenter = self.view.center;
     
-    // Open the datastore
-    self.datastore = [[DBDatastoreManager sharedManager] openDefaultDatastore:nil];
-    
     // Set delegates for text elements
     self.titleTextField.delegate = self;
     self.notesTextView.delegate = self;
@@ -40,6 +37,12 @@
     
     // Set Navigation bar buttons to be white
     [self.navigationController navigationBar].tintColor = [UIColor whiteColor];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    // Open the datastore
+    self.datastore = [[DBDatastoreManager sharedManager] openDefaultDatastore:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -62,6 +65,10 @@
     self.datastore = nil;
     self.recordToEdit = nil;
     self.deadline = nil;
+    
+    // Remove the observers
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 
 
@@ -215,6 +222,37 @@
 }
 
 
+#pragma mark - Action Sheet
+
+- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (popup.tag)
+    {
+        case 1:
+        {
+            switch (buttonIndex)
+            {
+                case 0:
+                    // Add to calendar
+                    [self addEventToCalendar];
+                    break;
+                    
+                case 1:
+                    // Delete Task
+                    [self deleteTask];
+                    break;
+                    
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+
 #pragma mark - Record Modification
 
 - (IBAction)textFieldFinishedEditing:(id)sender
@@ -255,13 +293,21 @@
     [self updateRecord];
 }
 
-- (IBAction)deleteTask:(id)sender
+- (void)deleteTask
 {
-    // Delete the current task
-    [self.recordToEdit deleteRecord];
-    [self.datastore sync:nil];
-    
-    [self performSegueWithIdentifier:@"unwindToList" sender:self];
+    // Prompt for confirmation
+    UIAlertView *deleteAlert = [[UIAlertView alloc] initWithTitle:@"Warning" message:@"Are you sure that you wish to delete this task?" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
+    [deleteAlert show];
+}
+
+- (IBAction)showTaskOptions:(id)sender
+{
+    UIActionSheet *popup = [[UIActionSheet alloc] initWithTitle:@"Choose an option:" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:
+                            @"Add to Calendar",
+                            @"Delete Task",
+                            nil];
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
 }
 
 
@@ -296,6 +342,100 @@
     
     // Sync the datastore
     [self.datastore sync:nil];
+}
+
+
+#pragma mark - UIAlertView
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex)
+    {
+        case 0:
+            // Delete the current task
+            [self.recordToEdit deleteRecord];
+            [self.datastore sync:nil];
+            [self performSegueWithIdentifier:@"unwindToList" sender:self];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+#pragma mark - Calendar
+
+- (void)addEventToCalendar
+{
+    if (self.deadline)
+    {
+        [self showPendingView];
+        EKEventStore *store = [[EKEventStore alloc] init];
+        [store requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error)
+         {
+             if (!granted)
+             {
+                 [self hidePendingView];
+                 UIAlertView *confirmationAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"The task could not be added to the calendar as it does not have permission" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                 [confirmationAlert show];
+                 return;
+             }
+             EKEvent *event = [EKEvent eventWithEventStore:store];
+             event.title = self.titleTextField.text;
+             event.startDate = self.deadline;
+             event.endDate = [self.deadline dateByAddingTimeInterval:3600];
+             event.notes = self.notesTextView.text;
+             [event setCalendar:[store defaultCalendarForNewEvents]];
+             NSError *err = nil;
+             [store saveEvent:event span:EKSpanThisEvent commit:YES error:&err];
+             if (!err)
+             {
+                 [self hidePendingView];
+                 UIAlertView *confirmationAlert = [[UIAlertView alloc] initWithTitle:@"Success" message:@"The task was added to your calendar" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                 [confirmationAlert show];
+             }
+             else
+             {
+                 [self hidePendingView];
+                 UIAlertView *confirmationAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"There was an error adding your task to your calendar" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                 [confirmationAlert show];
+             }
+         }];
+    }
+    else
+    {
+        UIAlertView *deadlineAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your task must have a deadline to be added to your calendar" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [deadlineAlert show];
+    }
+}
+
+- (void)showPendingView
+{
+    [self.pendingIndicator startAnimating];
+    self.pendingView.hidden = NO;
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         // Fade view in
+                         self.pendingView.alpha = 0.5;
+                     }
+                     completion:^(BOOL finished){}];
+}
+
+- (void)hidePendingView
+{
+    self.pendingView.hidden = YES;
+    [self.pendingIndicator stopAnimating];
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         // Fade view out
+                         self.pendingView.alpha = 0.0;
+                     }
+                     completion:^(BOOL finished){}];
 }
 
 

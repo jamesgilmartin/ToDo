@@ -24,4 +24,7 @@
 - (IBAction)returnHome:(id)sender;
 - (IBAction)showSortOptions:(id)sender;
 
+- (UIColor *)getColourForPriority: (int)index;
+- (NSString *)formattedStringFromDate: (NSDate *)dateToFormat forModified: (BOOL)modifiedText;
+
 @end

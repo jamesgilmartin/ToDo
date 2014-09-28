@@ -55,9 +55,10 @@
 
 }
 
-- (void)viewWillAppear:(BOOL)animated
+- (void)viewDidAppear:(BOOL)animated
 {
-    [self loadTaskData];
+    // Load summary of tasks. Delay is to allow table to close datastore when returning from table.
+    [self performSelector:@selector(loadTaskData) withObject:nil afterDelay:0.1];
 }
 
 - (void)didReceiveMemoryWarning {

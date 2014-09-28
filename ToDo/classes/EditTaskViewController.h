@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <Dropbox/Dropbox.h>
 #import "UIView+FindFirstResponder.h"
+#import <EventKit/EventKit.h>
 
-@interface EditTaskViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate>
+@interface EditTaskViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 
 
 @property (strong, nonatomic) DBRecord *recordToEdit;
@@ -25,12 +26,13 @@
 @property (weak, nonatomic) IBOutlet UITextField *deadlineTextField;
 @property (weak, nonatomic) IBOutlet UIButton *clearDeadlineButton;
 @property (weak, nonatomic) IBOutlet UITextView *notesTextView;
-@property (weak, nonatomic) IBOutlet UIButton *deleteRecordButton;
+@property (weak, nonatomic) IBOutlet UIView *pendingView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *pendingIndicator;
 
 - (IBAction)textFieldFinishedEditing:(id)sender;
 - (IBAction)completionSliderChanged:(id)sender;
 - (IBAction)prioritySegmentedControllerChanged:(id)sender;
 - (IBAction)clearDeadline:(id)sender;
-- (IBAction)deleteTask:(id)sender;
+- (IBAction)showTaskOptions:(id)sender;
 
 @end

@@ -45,6 +45,20 @@
     [self.itemListTable reloadData];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    // Stop listening for changes
+    [[DBDatastoreManager sharedManager] removeObserver:self];
+    
+    // Close the current datastore
+    if (self.datastore)
+    {
+        [self.datastore close];
+    }
+    
+    self.datastore = nil;
+    self.sortDescriptors = nil;
+}
 
 #pragma mark - Table
 
@@ -75,16 +89,18 @@
     cell.completionLabel.text = [NSString stringWithFormat:@"%@%%", item[@"completed"]];
     [cell.completionImage drawCircleWithPercentage:[item[@"completed"] intValue] andTintColour:cellColour];
     cell.titleLabel.text = item[@"title"];
-    cell.modifiedLabel.text = [NSString stringWithFormat:@"Modified: %@", [self formattedStringFromDate:item[@"modified"]]];
+    cell.modifiedLabel.text = [NSString stringWithFormat:@"Modified: %@", [self formattedStringFromDate:item[@"modified"] forModified:YES]];
     if (item[@"deadline"])
     {
-        cell.deadlineLabel.text = [NSString stringWithFormat:@"Deadline: %@", [self formattedStringFromDate:item[@"deadline"]]];
+        cell.deadlineLabel.text = [NSString stringWithFormat:@"Deadline: %@", [self formattedStringFromDate:item[@"deadline"] forModified:NO]];
     }
     else
     {
         // Prevents (null) from being displayed
         cell.deadlineLabel.text = @"Deadline: n/a";
     }
+    
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     return cell;
 }
@@ -119,7 +135,7 @@
 
 - (IBAction)addNewTask:(id)sender
 {
-    NSLog(@"Called");
+    // Segue to Add New Task
     [self performSegueWithIdentifier:@"addNewTask" sender:self];
 }
 
@@ -138,19 +154,8 @@
         EditTaskViewController *destination = [segue destinationViewController];
         destination.recordToEdit = item;
     }
-    
-    // Close the current datastore
-    if (self.datastore)
-    {
-        [self.datastore close];
-    }
-    
-    self.datastore = nil;
-    self.sortDescriptors = nil;
-    
-    // Stop listening for changes
-    [[DBDatastoreManager sharedManager] removeObserver:self];
 }
+
 
 #pragma mark - Sorting
 
@@ -214,13 +219,56 @@
 
 #pragma mark - Utility Functions
 
-- (NSString *)formattedStringFromDate: (NSDate *)date
+- (NSString *)formattedStringFromDate: (NSDate *)dateToFormat forModified: (BOOL)modifiedText
 {
-    // Returns a formatted NSString based on the supplied date
+    NSDate *now = [self dateWithoutTimeComponents:[NSDate date]];
+    NSDate *deadline = [self dateWithoutTimeComponents:dateToFormat];
+    
+    NSComparisonResult result = [now compare:deadline];
+    
+    NSDateFormatter *timeFormatter = [[NSDateFormatter alloc] init];
+    [timeFormatter setDateFormat:@"HH:mm"];
+    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"dd/MM/yy HH:mm"];
     
-    return [dateFormatter stringFromDate:date];
+    NSString *returnString;
+    
+    if (result == NSOrderedDescending)
+    {
+        if (modifiedText)
+        {
+            returnString = [dateFormatter stringFromDate:dateToFormat];
+        }
+        else
+        {
+            returnString = @"Deadline Passed";
+        }
+    }
+    else
+    {
+        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        
+        NSUInteger unitFlags = NSDayCalendarUnit;
+        
+        NSDateComponents *components = [gregorian components:unitFlags fromDate:now toDate:deadline options:0];
+        NSInteger days = [components day];
+        
+        if (days == 0)
+        {
+            returnString = [NSString stringWithFormat:@"Today %@", [timeFormatter stringFromDate:dateToFormat]];
+        }
+        else if (days == 1)
+        {
+            returnString = [NSString stringWithFormat:@"Tomorrow %@", [timeFormatter stringFromDate:dateToFormat]];
+        }
+        else
+        {
+            returnString = [dateFormatter stringFromDate:dateToFormat];
+        }
+    }
+    
+    return returnString;
 }
 
 - (UIColor *)getColourForPriority: (int)index
@@ -253,6 +301,13 @@
     return colour;
 }
 
+- (NSDate *)dateWithoutTimeComponents: (NSDate *)date
+{
+    // Remove time components from date
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
+    return [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
+}
 
 
 @end

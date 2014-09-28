@@ -12,7 +12,6 @@
 @interface HomeViewController : UIViewController
 
 @property (strong, nonatomic) DBDatastore *datastore;
-//@property (weak, nonatomic) DBAccount *account;
 
 @property (weak, nonatomic) IBOutlet UILabel *highPriorityTaskLabel;
 @property (weak, nonatomic) IBOutlet UILabel *mediumPriorityTaskLabel;
@@ -24,5 +23,7 @@
 
 - (IBAction)viewTasks:(id)sender;
 - (IBAction)toggleDropbox:(id)sender;
+
+- (NSDate *)dateWithoutTimeComponents: (NSDate *)date;
 
 @end

@@ -50,6 +50,13 @@
     }
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    // Remove the observers
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -242,7 +249,7 @@
     NSMutableDictionary *itemValues = [[NSMutableDictionary alloc] init];
     [itemValues setObject:self.titleTextField.text forKey:@"title"];
     [itemValues setObject:[NSNumber numberWithInteger:self.completionSlider.value] forKey:@"completed"];
-    if ((int)[NSNumber numberWithInteger:self.completionSlider.value] == 100)
+    if ([[NSNumber numberWithInteger:self.completionSlider.value] intValue] == 100)
     {
         [itemValues setObject:@YES forKey:@"completedBOOL"];
     }

@@ -26,7 +26,9 @@
 		1A111BA719D5845700CF588F /* AddNewTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A111BA619D5845700CF588F /* AddNewTaskViewController.m */; };
 		1A2D206E19D8173D00E8193E /* UIImageView+PercentageIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D206D19D8173D00E8193E /* UIImageView+PercentageIndicator.m */; };
 		1A2D207119D839BE00E8193E /* UIView+FindFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D207019D839BE00E8193E /* UIView+FindFirstResponder.m */; };
+		1A2D207219D860CB00E8193E /* Dropbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A111B8D19D4B44E00CF588F /* Dropbox.framework */; };
 		1A3EB63F19D5A89B00136697 /* EditTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3EB63E19D5A89B00136697 /* EditTaskViewController.m */; };
+		1ABB736E19D89CA400038BB6 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ABB736D19D89CA400038BB6 /* EventKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,7 @@
 		1A2D207019D839BE00E8193E /* UIView+FindFirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FindFirstResponder.m"; path = "ToDo/classes/UIView+FindFirstResponder.m"; sourceTree = "<group>"; };
 		1A3EB63D19D5A89B00136697 /* EditTaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditTaskViewController.h; path = ToDo/classes/EditTaskViewController.h; sourceTree = "<group>"; };
 		1A3EB63E19D5A89B00136697 /* EditTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EditTaskViewController.m; path = ToDo/classes/EditTaskViewController.m; sourceTree = "<group>"; };
+		1ABB736D19D89CA400038BB6 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1ABB736E19D89CA400038BB6 /* EventKit.framework in Frameworks */,
 				1A111B9A19D4B49B00CF588F /* CFNetwork.framework in Frameworks */,
 				1A111B9819D4B49300CF588F /* Security.framework in Frameworks */,
 				1A111B9619D4B48400CF588F /* QuartzCore.framework in Frameworks */,
@@ -93,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A2D207219D860CB00E8193E /* Dropbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,6 +166,7 @@
 		1A111B8C19D4B41B00CF588F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1ABB736D19D89CA400038BB6 /* EventKit.framework */,
 				1A111B9919D4B49B00CF588F /* CFNetwork.framework */,
 				1A111B9719D4B49300CF588F /* Security.framework */,
 				1A111B9519D4B48400CF588F /* QuartzCore.framework */,
@@ -456,6 +462,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -475,6 +482,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = ToDoTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
