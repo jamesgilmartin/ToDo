@@ -10,15 +10,18 @@
 #import <Dropbox/Dropbox.h>
 #import "ItemListTableViewCell.h"
 #import "EditTaskViewController.h"
+#import "UIImageView+PercentageIndicator.h"
 
-@interface ItemListViewController : UIViewController <UITableViewDataSource, UITableViewDataSource>
+@interface ItemListViewController : UIViewController <UITableViewDataSource, UITableViewDataSource, UIActionSheetDelegate>
 
 @property (nonatomic, strong) NSArray *sortDescriptors;
 @property (nonatomic, strong) DBDatastore *datastore;
+@property (nonatomic, strong) NSMutableDictionary *queryDictionary;
 
 @property (weak, nonatomic) IBOutlet UITableView *itemListTable;
 
 - (IBAction)addNewTask:(id)sender;
 - (IBAction)returnHome:(id)sender;
+- (IBAction)showSortOptions:(id)sender;
 
 @end

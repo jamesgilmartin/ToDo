@@ -18,6 +18,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self setNeedsStatusBarAppearanceUpdate];
+    
     DBAccount *account = [[DBAccountManager sharedManager] linkedAccount];
     
     // Check if app has been linked to a Dropbox account
@@ -51,6 +53,11 @@
         }
     }];
 
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self loadTaskData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -95,6 +102,8 @@
         
         // Hide the account information from display
         self.accountLabel.hidden = YES;
+        
+        [self loadTaskData];
     }
     else
     {
@@ -133,6 +142,8 @@
         // Unhide the account information
         self.accountLabel.hidden = NO;
     }
+    
+    [self loadTaskData];
 }
 
 - (void)linkCancelled: (NSNotification *)notification
@@ -142,6 +153,70 @@
     
     // Re-enable button without updating as the linking process was either cancelled or failed
     self.toggleDropboxButton.enabled = YES;
+}
+
+- (void)loadTaskData
+{
+    self.datastore = [[DBDatastoreManager sharedManager] openDefaultDatastore:nil];
+    DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
+    
+    int hpTasks = (int)[[itemsTable query:@{ @"priority": @2, @"completedBOOL": @NO } error:nil] count];
+    NSString *highPriorityLabelString;
+    if (hpTasks == 1)
+    {
+        highPriorityLabelString = @"High priority task still to complete";
+    }
+    else
+    {
+        highPriorityLabelString = @"High priority tasks still to complete";
+    }
+    self.highPriorityTaskLabel.text = [NSString stringWithFormat:@"%i %@", hpTasks, highPriorityLabelString];
+    
+    int mpTasks = (int)[[itemsTable query:@{ @"priority": @1, @"completedBOOL": @NO } error:nil] count];
+    NSString *mediumPriorityLabelString;
+    if (mpTasks == 1)
+    {
+        mediumPriorityLabelString = @"Medium priority task still to complete";
+    }
+    else
+    {
+        mediumPriorityLabelString = @"Medium priority tasks still to complete";
+    }
+    self.mediumPriorityTaskLabel.text = [NSString stringWithFormat:@"%i %@", mpTasks, mediumPriorityLabelString];
+    
+    int lpTasks = (int)[[itemsTable query:@{ @"priority": @0, @"completedBOOL": @NO } error:nil] count];
+    NSString *lowPriorityLabelString;
+    if (mpTasks == 1)
+    {
+        lowPriorityLabelString = @"Low priority task still to complete";
+    }
+    else
+    {
+        lowPriorityLabelString = @"Low priority tasks still to complete";
+    }
+    self.lowPriorityTaskLabel.text = [NSString stringWithFormat:@"%i %@", lpTasks, lowPriorityLabelString];
+    
+    int todayTasks = (int)[[itemsTable query:@{ @"roundedDeadline": [self dateWithoutTimeComponents:[NSDate date]] } error:nil] count];
+    NSString *dueTaskLabelString;
+    if (todayTasks == 1)
+    {
+        dueTaskLabelString = @"Task to complete today";
+    }
+    else
+    {
+        dueTaskLabelString = @"Tasks to complete today";
+    }
+    self.dueTaskLabel.text = [NSString stringWithFormat:@"%i %@", todayTasks, dueTaskLabelString];
+    
+    [self.datastore close];
+    self.datastore = nil;
+}
+
+- (NSDate *)dateWithoutTimeComponents: (NSDate *)date
+{
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
+    return [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
 }
 
 @end

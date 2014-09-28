@@ -11,7 +11,13 @@
 
 @interface HomeViewController : UIViewController
 
-@property (weak, nonatomic) DBAccount *account;
+@property (strong, nonatomic) DBDatastore *datastore;
+//@property (weak, nonatomic) DBAccount *account;
+
+@property (weak, nonatomic) IBOutlet UILabel *highPriorityTaskLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mediumPriorityTaskLabel;
+@property (weak, nonatomic) IBOutlet UILabel *lowPriorityTaskLabel;
+@property (weak, nonatomic) IBOutlet UILabel *dueTaskLabel;
 
 @property (weak, nonatomic) IBOutlet UIButton *toggleDropboxButton;
 @property (weak, nonatomic) IBOutlet UILabel *accountLabel;

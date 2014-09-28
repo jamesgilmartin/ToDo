@@ -19,6 +19,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    // Store the original center in order to reset view when keyboard closes.
+    self.originalCenter = self.view.center;
+    
     // Set delegates
     self.titleTextField.delegate = self;
     self.notesTextView.delegate = self;
@@ -30,7 +33,21 @@
     [self setUpModifiedKeyboards];
     
     // Initially disable save button
-    self.saveBarButton.enabled = NO;
+    self.saveButton.enabled = NO;
+    
+    // Listen for keyboard actions
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    // Set Navigation bar buttons to be white
+    [self.navigationController navigationBar].tintColor = [UIColor whiteColor];
+    
+    // Disable gestures
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)])
+    {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+        self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -110,6 +127,61 @@
     [self.notesTextView resignFirstResponder];
 }
 
+- (void)keyboardWillShow: (NSNotification *)notification
+{
+    // Get the size of the keyboard
+    NSDictionary* info = [notification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    // Check which object is the first responder
+    if ([self.view findFirstResponder] == self.deadlineTextField)
+    {
+        // Check if the object is hidden by the keyboard
+        int relativePositionToKeyboardTop = (self.view.bounds.size.height - kbSize.height) - (self.deadlineTextField.frame.origin.y + self.deadlineTextField.bounds.size.height);
+        
+        if (relativePositionToKeyboardTop < 0)
+        {
+            // Object is hidden so move the view
+            [self moveViewUp: relativePositionToKeyboardTop];
+        }
+    }
+    else if ([self.view findFirstResponder] == self.notesTextView)
+    {
+        // Check if the object is hidden by the keyboard
+        int relativePositionToKeyboardTop = (self.view.bounds.size.height - kbSize.height) - (self.notesTextView.frame.origin.y + self.notesTextView.bounds.size.height);
+        
+        if (relativePositionToKeyboardTop < 0)
+        {
+            // Object is hidden so move the view
+            [self moveViewUp: relativePositionToKeyboardTop];
+        }
+    }
+}
+
+- (void)moveViewUp: (int)distance
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         // Move the view up in order to reveal the first responder
+                         self.view.center = CGPointMake(self.view.center.x, self.view.center.y + distance - 20);
+                     }
+                     completion:^(BOOL finished){}];
+}
+
+- (void)keyboardWillHide: (NSNotification *)notification
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         // Reset the view to its original position
+                         self.view.center = self.originalCenter;
+                     }
+                     completion:^(BOOL finished){}];
+}
+
 
 #pragma mark - Record Modification
 
@@ -118,11 +190,11 @@
     // Save button enabled only if the new element has a title
     if (self.titleTextField.text.length > 0)
     {
-        self.saveBarButton.enabled = YES;
+        self.saveButton.enabled = YES;
     }
     else
     {
-        self.saveBarButton.enabled = NO;
+        self.saveButton.enabled = NO;
     }
 }
 
@@ -170,10 +242,24 @@
     NSMutableDictionary *itemValues = [[NSMutableDictionary alloc] init];
     [itemValues setObject:self.titleTextField.text forKey:@"title"];
     [itemValues setObject:[NSNumber numberWithInteger:self.completionSlider.value] forKey:@"completed"];
+    if ((int)[NSNumber numberWithInteger:self.completionSlider.value] == 100)
+    {
+        [itemValues setObject:@YES forKey:@"completedBOOL"];
+    }
+    else
+    {
+        [itemValues setObject:@NO forKey:@"completedBOOL"];
+    }
     [itemValues setObject:[NSNumber numberWithInteger:self.prioritySegmentedControl.selectedSegmentIndex] forKey:@"priority"];
     if (self.deadline)
     {
         [itemValues setObject:self.deadline forKey:@"deadline"];
+        [itemValues setObject:@YES forKey:@"hasDeadline"];
+        [itemValues setObject:[self dateWithoutTimeComponents:self.deadline] forKey:@"roundedDeadline"];
+    }
+    else
+    {
+        [itemValues setObject:@NO forKey:@"hasDeadline"];
     }
     [itemValues setObject:self.notesTextView.text forKey:@"notes"];
     [itemValues setObject:[NSDate date] forKey:@"modified"];
@@ -214,6 +300,18 @@
     
     // Return formatted date
     return [dateFormat stringFromDate:date];
+}
+
+- (NSDate *)dateWithoutTimeComponents: (NSDate *)date
+{
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
+    return [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    return NO;
 }
 
 @end

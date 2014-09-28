@@ -18,14 +18,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    // Store the original center in order to reset view when keyboard closes.
+    self.originalCenter = self.view.center;
+    
     // Open the datastore
     self.datastore = [[DBDatastoreManager sharedManager] openDefaultDatastore:nil];
-    
-    // Add observer to listen for changes
-    __weak typeof(self) weakSelf = self;
-    [self.datastore addObserver:self block:^{
-        [weakSelf recordFinishedUpdating];
-    }];
     
     // Set delegates for text elements
     self.titleTextField.delegate = self;
@@ -34,17 +31,37 @@
     // Set the initial values of UI elements
     [self setInitialValues];
     
-    // Set initial states of variables;
-    self.recordWasModified = NO;
-    self.saveChangesButton.enabled = NO;
-    
     // Set up custom keyboard configurations
     [self setUpModifiedKeyboards];
+    
+    // Listen for keyboard actions
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    // Set Navigation bar buttons to be white
+    [self.navigationController navigationBar].tintColor = [UIColor whiteColor];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    // Remove observers
+    [self.datastore removeObserver:self];
+    
+    // Close the datastore
+    if (self.datastore)
+    {
+        [self.datastore close];
+    }
+    
+    // Clear properties
+    self.datastore = nil;
+    self.recordToEdit = nil;
+    self.deadline = nil;
 }
 
 
@@ -103,38 +120,6 @@
 
 #pragma mark - Navigation
 
-- (IBAction)cancelEdit:(id)sender
-{
-    // Check if anything has been modified
-    if (!self.recordWasModified)
-    {
-        // If nothing has changed return to list
-        [self performSegueWithIdentifier:@"unwindToList" sender:self];
-    }
-    else
-    {
-        // If changes have been made prompt user
-        UIAlertView *saveWarning = [[UIAlertView alloc] initWithTitle:@"Warning" message:@"You have unsaved changes. Do you wish to save the changes?" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil];
-        [saveWarning show];
-    }
-}
-
-- (IBAction)saveChanges:(id)sender
-{
-    // Check the title is valid
-    if (self.titleTextField.text.length < 1)
-    {
-        // Prompt user to enter a title
-        UIAlertView *titleErrorAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Your entry must have a title." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-        [titleErrorAlert show];
-    }
-    else
-    {
-        // Save changes to the element
-        [self updateRecord];
-    }
-}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // Remove observers
@@ -174,65 +159,100 @@
     [self.notesTextView resignFirstResponder];
 }
 
+- (void)keyboardWillShow: (NSNotification *)notification
+{
+    // Get the size of the keyboard
+    NSDictionary* info = [notification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    // Check which object is the first responder
+    if ([self.view findFirstResponder] == self.deadlineTextField)
+    {
+        // Check if the object is hidden by the keyboard
+        int relativePositionToKeyboardTop = (self.view.bounds.size.height - kbSize.height) - (self.deadlineTextField.frame.origin.y + self.deadlineTextField.bounds.size.height);
+        
+        if (relativePositionToKeyboardTop < 0)
+        {
+            // Object is hidden so move the view
+            [self moveViewUp: relativePositionToKeyboardTop];
+        }
+    }
+    else if ([self.view findFirstResponder] == self.notesTextView)
+    {
+        // Check if the object is hidden by the keyboard
+        int relativePositionToKeyboardTop = (self.view.bounds.size.height - kbSize.height) - (self.notesTextView.frame.origin.y + self.notesTextView.bounds.size.height);
+        
+        if (relativePositionToKeyboardTop < 0)
+        {
+            // Object is hidden so move the view
+            [self moveViewUp: relativePositionToKeyboardTop];
+        }
+    }
+}
+
+- (void)moveViewUp: (int)distance
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         // Move the view up in order to reveal the first responder
+                         self.view.center = CGPointMake(self.view.center.x, self.view.center.y + distance - 20);
+                     }
+                     completion:^(BOOL finished){}];
+}
+
+- (void)keyboardWillHide: (NSNotification *)notification
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         // Reset the view to its original position
+                         self.view.center = self.originalCenter;
+                     }
+                     completion:^(BOOL finished){}];
+}
+
 
 #pragma mark - Record Modification
 
-- (IBAction)textFieldDidChange:(id)sender
+- (IBAction)textFieldFinishedEditing:(id)sender
 {
-    // Title is being modified
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
+    [self updateRecord];
 }
 
 - (IBAction)completionSliderChanged:(id)sender
 {
-    // Completion is being modified
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
-    
     // Update the label to reflect changes
     self.completionLabel.text = [NSString stringWithFormat:@"%@%%", [NSNumber numberWithInteger:self.completionSlider.value]];
+    [self updateRecord];
 }
 
 - (IBAction)prioritySegmentedControllerChanged:(id)sender
 {
-    // Priority is being modified
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
+    [self updateRecord];
 }
 
 - (void)datePickerValueChanged: (UIDatePicker *)sender
 {
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
-    
     // Update deadline field and store the date
     self.deadlineTextField.text = [self formattedStringFromDate:sender.date];
     self.deadline = sender.date;
+    [self updateRecord];
 }
 
 - (IBAction)clearDeadline:(id)sender
 {
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
-    
     // Clear deadline data
     self.deadlineTextField.text = @"";
     self.deadline = nil;
+    [self updateRecord];
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+- (void)textViewDidChange:(UITextView *)textView
 {
-    // Notes are being modified
-    // Enable Save Button
-    self.recordWasModified = YES;
-    self.saveChangesButton.enabled = YES;
-    return YES;
+    [self updateRecord];
 }
 
 - (IBAction)deleteTask:(id)sender
@@ -240,6 +260,8 @@
     // Delete the current task
     [self.recordToEdit deleteRecord];
     [self.datastore sync:nil];
+    
+    [self performSegueWithIdentifier:@"unwindToList" sender:self];
 }
 
 
@@ -250,45 +272,30 @@
     // Update record with new values
     self.recordToEdit[@"title"] = self.titleTextField.text;
     self.recordToEdit[@"completed"] = [NSNumber numberWithInteger:self.completionSlider.value];
+    if ((int)self.completionSlider.value == 100)
+    {
+        self.recordToEdit[@"completedBOOL"] = @YES;
+    }
+    else
+    {
+        self.recordToEdit[@"completedBOOL"] = @NO;
+    }
     self.recordToEdit[@"priority"] = [NSNumber numberWithInteger:self.prioritySegmentedControl.selectedSegmentIndex];
     if (self.deadline)
     {
         self.recordToEdit[@"deadline"] = self.deadline;
+        self.recordToEdit[@"hasDeadline"] = @YES;
+        self.recordToEdit[@"roundedDeadline"] = [self dateWithoutTimeComponents:self.deadline];
+    }
+    else
+    {
+        self.recordToEdit[@"hasDeadline"] = @NO;
     }
     self.recordToEdit[@"notes"] = self.notesTextView.text;
     self.recordToEdit[@"modified"] = [NSDate date];
     
     // Sync the datastore
     [self.datastore sync:nil];
-}
-
-- (void)recordFinishedUpdating
-{
-    // Save has completed so return to the list
-    [self performSegueWithIdentifier:@"unwindToList" sender:self];
-}
-
-
-#pragma mark - Alert View
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    // Check the response from the user
-    switch (buttonIndex)
-    {
-        case 0:
-            // They wish to save changes
-            [self saveChanges:(nil)];
-            break;
-            
-        case 1:
-            // They wish to discard changes
-            [self performSegueWithIdentifier:@"unwindToList" sender:self];
-            break;
-            
-        default:
-            break;
-    }
 }
 
 
@@ -302,6 +309,13 @@
     
     // Return formatted date
     return [dateFormat stringFromDate:date];
+}
+
+- (NSDate *)dateWithoutTimeComponents: (NSDate *)date
+{
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
+    return [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
 }
 
 @end

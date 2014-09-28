@@ -8,14 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <Dropbox/Dropbox.h>
+#import "UIView+FindFirstResponder.h"
 
-@interface AddNewTaskViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate>
+@interface AddNewTaskViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) DBDatastore *datastore;
 @property (strong, nonatomic) NSDate *deadline;
+@property (assign, nonatomic) CGPoint originalCenter;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *cancelBarButton;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *saveBarButton;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UISlider *completionSlider;
 @property (weak, nonatomic) IBOutlet UILabel *completionLabel;

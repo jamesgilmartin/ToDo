@@ -17,6 +17,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    // Set the order for the table (Highest priority first then ordered by completion)
+    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.modified" ascending:NO]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -30,9 +33,6 @@
     
     // Open the datastore
     self.datastore = [[DBDatastoreManager sharedManager] openDefaultDatastore:nil];
-    
-    // Set the order for the table (Highest priority first then ordered by completion)
-    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.priority" ascending:NO],[NSSortDescriptor sortDescriptorWithKey:@"fields.completed" ascending:YES]];
     
     // Observe changes to datastore list (possibly from other devices)
     __weak typeof(self) weakSelf = self;
@@ -52,7 +52,7 @@
 {
     // Rows need to be equal to the amount of items in our datastore
     DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
-    return [[itemsTable query:nil error:nil] count];
+    return [[itemsTable query:self.queryDictionary error:nil] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -62,15 +62,18 @@
     
     // Load information from datastore
     DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
-    NSArray *items = [[itemsTable query:nil error:nil] sortedArrayUsingDescriptors:self.sortDescriptors];
+    NSArray *items = [[itemsTable query:self.queryDictionary error:nil] sortedArrayUsingDescriptors:self.sortDescriptors];
     DBRecord *item = [items objectAtIndex:indexPath.row];
     
     // Set background colour based on priority of task
     NSInteger priority = [item[@"priority"] integerValue];
-    cell.backgroundColor = [self getColourForPriority:(int)priority];
+    UIColor *cellColour = [self getColourForPriority:(int)priority];
+    cell.backgroundColor = cellColour;
     
     // Populate the field of the custom cell
-    cell.completionLabel.text = [NSString stringWithFormat:@"%@", item[@"completed"]];
+    
+    cell.completionLabel.text = [NSString stringWithFormat:@"%@%%", item[@"completed"]];
+    [cell.completionImage drawCircleWithPercentage:[item[@"completed"] intValue] andTintColour:cellColour];
     cell.titleLabel.text = item[@"title"];
     cell.modifiedLabel.text = [NSString stringWithFormat:@"Modified: %@", [self formattedStringFromDate:item[@"modified"]]];
     if (item[@"deadline"])
@@ -86,21 +89,10 @@
     return cell;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Get the record associated with the row
-    DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
-    NSArray *items = [[itemsTable query:nil error:nil] sortedArrayUsingDescriptors:self.sortDescriptors];
-    DBRecord *item = [items objectAtIndex:indexPath.row];
-    
-    // Go to EditTaskViewController
-    [self performSegueWithIdentifier:@"editTask" sender:item];
-}
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Height of our custom cell
-    return 80;
+    return 60;
 }
 
 
@@ -112,8 +104,22 @@
     [self performSegueWithIdentifier:@"returnHome" sender:self];
 }
 
+- (IBAction)showSortOptions:(id)sender
+{
+    UIActionSheet *popup = [[UIActionSheet alloc] initWithTitle:@"Select sorting option:" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:
+                            @"Sort by Completion",
+                            @"Sort by Deadline",
+                            @"Sort by Priority",
+                            @"Sort by Modified",
+                            @"Show / Hide Completed",
+                            nil];
+    popup.tag = 1;
+    [popup showInView:[UIApplication sharedApplication].keyWindow];
+}
+
 - (IBAction)addNewTask:(id)sender
 {
+    NSLog(@"Called");
     [self performSegueWithIdentifier:@"addNewTask" sender:self];
 }
 
@@ -122,6 +128,17 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+    // Check destination of Segue
+    if ([[segue destinationViewController] isKindOfClass:[EditTaskViewController class]])
+    {
+        // If we are going to edit pass the relevent record to the View Controller
+        DBTable *itemsTable = [self.datastore getTable:@"toDoItems"];
+        NSArray *items = [[itemsTable query:self.queryDictionary error:nil] sortedArrayUsingDescriptors:self.sortDescriptors];
+        DBRecord *item = [items objectAtIndex:[self.itemListTable indexPathForSelectedRow].row];
+        EditTaskViewController *destination = [segue destinationViewController];
+        destination.recordToEdit = item;
+    }
+    
     // Close the current datastore
     if (self.datastore)
     {
@@ -133,13 +150,64 @@
     
     // Stop listening for changes
     [[DBDatastoreManager sharedManager] removeObserver:self];
-    
-    // Check destination of Segue
-    if ([segue.identifier isEqualToString:@"editTask"])
+}
+
+#pragma mark - Sorting
+
+- (void)actionSheet:(UIActionSheet *)popup clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (popup.tag)
     {
-        // If we are going to edit pass the relevent record to the View Controller
-        EditTaskViewController *destination = [segue destinationViewController];
-        destination.recordToEdit = sender;
+        case 1:
+        {
+            switch (buttonIndex)
+            {
+                case 0:
+                    // Sort by completion
+                    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.completed" ascending:NO]];
+                    [self.itemListTable reloadData];
+                    break;
+                case 1:
+                    // Sort by Deadline
+                    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.hasDeadline" ascending:NO], [NSSortDescriptor sortDescriptorWithKey:@"fields.deadline" ascending:YES]];
+                    [self.itemListTable reloadData];
+                    break;
+                case 2:
+                    // Sort by Priority
+                    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.priority" ascending:NO], [NSSortDescriptor sortDescriptorWithKey:@"fields.completed" ascending:YES]];
+                    [self.itemListTable reloadData];
+                    break;
+                case 3:
+                    // Sort by Modified
+                    self.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"fields.modified" ascending:NO]];
+                    [self.itemListTable reloadData];
+                    break;
+                case 4:
+                    // Show / Hide Completed
+                    [self toggleShowCompleted];
+                    break;
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+- (void)toggleShowCompleted
+{
+    if (self.queryDictionary)
+    {
+        self.queryDictionary = nil;
+        [self.itemListTable reloadData];
+    }
+    else
+    {
+        self.queryDictionary = [[NSMutableDictionary alloc] init];
+        [self.queryDictionary setObject:@NO forKey:@"completedBOOL"];
+        [self.itemListTable reloadData];
     }
 }
 
@@ -163,15 +231,18 @@
     switch (index)
     {
         case 0:
-            colour = [UIColor greenColor];
+            // Green
+            colour = [UIColor colorWithRed:(45.0/255.0) green:(144.0/255.0) blue:(68.0/255.0) alpha:1];
             break;
             
         case 1:
-            colour = [UIColor yellowColor];
+            // Orange
+            colour = [UIColor colorWithRed:(216.0/255.0) green:(92.0/255.0) blue:(39.0/255.0) alpha:1];
             break;
             
         case 2:
-            colour = [UIColor redColor];
+            // Red
+            colour = [UIColor colorWithRed:(201.0/255.0) green:(32.0/255.0) blue:(55.0/255.0) alpha:1];
             break;
             
         default:
@@ -181,5 +252,7 @@
     
     return colour;
 }
+
+
 
 @end

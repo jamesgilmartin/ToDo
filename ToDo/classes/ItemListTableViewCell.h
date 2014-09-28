@@ -11,6 +11,7 @@
 @interface ItemListTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *completionLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *completionImage;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *deadlineLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modifiedLabel;

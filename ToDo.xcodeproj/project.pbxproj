@@ -24,6 +24,8 @@
 		1A111BA119D4CA8900CF588F /* ItemListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A111BA019D4CA8900CF588F /* ItemListTableViewCell.m */; };
 		1A111BA419D4CBFF00CF588F /* ItemListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A111BA319D4CBFF00CF588F /* ItemListViewController.m */; };
 		1A111BA719D5845700CF588F /* AddNewTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A111BA619D5845700CF588F /* AddNewTaskViewController.m */; };
+		1A2D206E19D8173D00E8193E /* UIImageView+PercentageIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D206D19D8173D00E8193E /* UIImageView+PercentageIndicator.m */; };
+		1A2D207119D839BE00E8193E /* UIView+FindFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D207019D839BE00E8193E /* UIView+FindFirstResponder.m */; };
 		1A3EB63F19D5A89B00136697 /* EditTaskViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3EB63E19D5A89B00136697 /* EditTaskViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +66,10 @@
 		1A111BA319D4CBFF00CF588F /* ItemListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ItemListViewController.m; path = ToDo/classes/ItemListViewController.m; sourceTree = "<group>"; };
 		1A111BA519D5845700CF588F /* AddNewTaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddNewTaskViewController.h; path = ToDo/classes/AddNewTaskViewController.h; sourceTree = "<group>"; };
 		1A111BA619D5845700CF588F /* AddNewTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddNewTaskViewController.m; path = ToDo/classes/AddNewTaskViewController.m; sourceTree = "<group>"; };
+		1A2D206C19D8173D00E8193E /* UIImageView+PercentageIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+PercentageIndicator.h"; sourceTree = "<group>"; };
+		1A2D206D19D8173D00E8193E /* UIImageView+PercentageIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+PercentageIndicator.m"; sourceTree = "<group>"; };
+		1A2D206F19D839BE00E8193E /* UIView+FindFirstResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIView+FindFirstResponder.h"; path = "ToDo/classes/UIView+FindFirstResponder.h"; sourceTree = "<group>"; };
+		1A2D207019D839BE00E8193E /* UIView+FindFirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIView+FindFirstResponder.m"; path = "ToDo/classes/UIView+FindFirstResponder.m"; sourceTree = "<group>"; };
 		1A3EB63D19D5A89B00136697 /* EditTaskViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EditTaskViewController.h; path = ToDo/classes/EditTaskViewController.h; sourceTree = "<group>"; };
 		1A3EB63E19D5A89B00136697 /* EditTaskViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EditTaskViewController.m; path = ToDo/classes/EditTaskViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -169,6 +175,10 @@
 		1A111B9E19D4B91900CF588F /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				1A2D206C19D8173D00E8193E /* UIImageView+PercentageIndicator.h */,
+				1A2D206D19D8173D00E8193E /* UIImageView+PercentageIndicator.m */,
+				1A2D206F19D839BE00E8193E /* UIView+FindFirstResponder.h */,
+				1A2D207019D839BE00E8193E /* UIView+FindFirstResponder.m */,
 				1A111B9B19D4B91200CF588F /* HomeViewController.h */,
 				1A111B9C19D4B91200CF588F /* HomeViewController.m */,
 				1A111B9F19D4CA8900CF588F /* ItemListTableViewCell.h */,
@@ -285,7 +295,9 @@
 			files = (
 				1A111BA119D4CA8900CF588F /* ItemListTableViewCell.m in Sources */,
 				1A111B6C19D4B40500CF588F /* AppDelegate.m in Sources */,
+				1A2D206E19D8173D00E8193E /* UIImageView+PercentageIndicator.m in Sources */,
 				1A111B6919D4B40500CF588F /* main.m in Sources */,
+				1A2D207119D839BE00E8193E /* UIView+FindFirstResponder.m in Sources */,
 				1A111BA419D4CBFF00CF588F /* ItemListViewController.m in Sources */,
 				1A3EB63F19D5A89B00136697 /* EditTaskViewController.m in Sources */,
 				1A111BA719D5845700CF588F /* AddNewTaskViewController.m in Sources */,
